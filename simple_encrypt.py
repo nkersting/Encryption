@@ -6,13 +6,12 @@
 #          keep the *.kyx extension.
 #  UPLOAD: You are encouraged to upload the output file to the Quantum Repoire Server (http://www.quantumrepoire.com)
 #######################################################################
-#########################################################################
 # This script produces usable sum-encrypted messages, but there are still some
 # additional needed improvements. For example,
-# 1. handle punctuation (note convert "read." to "read" but not "U.S." to "U.S")
-# 2. hash words not in the dictionary to unused unique integers 
-# 3. convert plural nouns to singular (WordNet has no plurals)
-########################################################################################
+# 1. tokenization, e.g. handle punctuation (note convert "read." to "read" but not "U.S." to "U.S")
+# 2. lemmatization, e.g. convert plural nouns to singular (WordNet has no plurals)
+# 3. hash words not in the dictionary to unused unique integers (WordNet uses integers between 0 and roughly 1.6*10^7) 
+##########################################################################
 
 import csv
 import sys
