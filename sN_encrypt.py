@@ -27,11 +27,6 @@ import time
 
 #########################################
 
-def uniq(list):
-    set = {}
-    return [set.setdefault(x,x) for x in list if x not in set]
-
-##########################
 def findlist(entryword, syndict, stopwords):
     newlist = []
     if (syndict.has_key(entryword) and entryword not in stopwords):
@@ -42,7 +37,7 @@ def findlist(entryword, syndict, stopwords):
 ####################################
 def SumWordsDFSRecursive(currwords, index, syndict, stopwords, subtotal, sumlist):
     if index == len(currwords):
-        sumlist.append(subtotal)
+        sumlist.add(subtotal)
         return
 
     word = currwords[index]
@@ -54,7 +49,6 @@ def SumWordsDFSRecursive(currwords, index, syndict, stopwords, subtotal, sumlist
 def SumNEncrypt(userwords, currwords, syndict, stopwords, N, sumlist):
     if len(currwords) == N:
         SumWordsDFSRecursive(currwords, 0, syndict, stopwords, 0, sumlist)
-        sumlist = uniq(sumlist)       # eliminate duplicate entries as we go to save memory
         return
 
     for i in range(0, len(userwords)):
@@ -96,10 +90,10 @@ if usertext == '':
 userwords = shlex.split(usertext)
 
 currwords = []
-sumlist = []
+sumlist = set()
 SumNEncrypt(userwords, currwords, syndict, stopwords, N, sumlist)
 
  
 
-for key in sorted(uniq(sumlist)):              # write output with one sum per line
+for key in sorted(sumlist):              # write output with one sum per line
     outfile.write(str(key) + '\n')
