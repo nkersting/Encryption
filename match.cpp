@@ -275,7 +275,7 @@ void fill_dictionary( std::map<std::string, vector <int> >& WordMap)
 
   // read in the  "word-synsets.txt"
   ifstream word_synset_file;
-  word_synset_file.open ("omegaO2.txt");
+  word_synset_file.open ("wordsets.txt");
 
 
 
@@ -309,7 +309,7 @@ void fill_dictionary( std::map<std::string, vector <int> >& WordMap)
 ////////////////////////////////
 
 ///////////////////////////////
-void    make_MatchMap(std::map<std::string, float >& MatchMap,
+void    make_MatchMap(std::map<std::string, double >& MatchMap,
 		      std::map<int, vector <std::pair<string,string> > >& KeyMap,
                       std::map<std::string, vector <int> > &WordMap,   // the thesaurus
 		      vector <int>& keylist)
@@ -343,19 +343,19 @@ void    make_MatchMap(std::map<std::string, float >& MatchMap,
      int normalization = (findSynsets((it->first).first, WordMap).size()) * (findSynsets((it->first).second, WordMap).size());
      if (MatchMap.find((it->first).first) == MatchMap.end())
      {
-        MatchMap[(it->first).first] = 1.0*(it->second)/normalization;
+        MatchMap[(it->first).first] = min(1.0, 1.0*(it->second)/normalization);  // force maximum to be 1.0
      }
      else
      {
-        MatchMap[(it->first).first] = max((float)(1.0*(it->second)/normalization), MatchMap[(it->first).first]); 
+        MatchMap[(it->first).first] = min(1.0, max(1.0*(it->second)/normalization, MatchMap[(it->first).first])); 
      }
      if (MatchMap.find((it->first).second) == MatchMap.end())
      {
-        MatchMap[(it->first).second] = 1.0*(it->second)/normalization;
+        MatchMap[(it->first).second] = min(1.0, 1.0*(it->second)/normalization);
      }
      else
      {
-        MatchMap[(it->first).second] = max((float)(1.0*(it->second)/normalization), MatchMap[(it->first).second]);
+        MatchMap[(it->first).second] = min(1.0, max(1.0*(it->second)/normalization, MatchMap[(it->first).second]));
      }
   }
 
@@ -365,11 +365,11 @@ void    make_MatchMap(std::map<std::string, float >& MatchMap,
 /////////////////////////////
 
 
-void  print_SortedMap(std::map<float, vector <std::string> >& SortedMap,
-		      std::map<std::string, float >& MatchMap)
+void  print_SortedMap(std::map<double, vector <std::string> >& SortedMap,
+		      std::map<std::string, double >& MatchMap)
 {
 
-  for (std::map<std::string, float >::iterator iter = MatchMap.begin(); 
+  for (std::map<std::string, double >::iterator iter = MatchMap.begin(); 
        iter != MatchMap.end(); iter++)
     {
       SortedMap[-1.0*(iter->second)].push_back(iter->first);   //trick to get biggest values first
@@ -377,7 +377,7 @@ void  print_SortedMap(std::map<float, vector <std::string> >& SortedMap,
 
 
 
-  for (std::map<float, vector <std::string> >::iterator iter = SortedMap.begin(); 
+  for (std::map<double, vector <std::string> >::iterator iter = SortedMap.begin(); 
        iter != SortedMap.end(); iter++)
     {
       cout << "<tr>\r\n";
@@ -412,7 +412,7 @@ void  print_SortedMap(std::map<float, vector <std::string> >& SortedMap,
    
 
 
-void  WriteMatchPage(std::map<std::string, float >& MatchMap, string input_file)
+void  WriteMatchPage(std::map<std::string, double >& MatchMap, string input_file)
 {
 
 
@@ -453,7 +453,7 @@ void  WriteMatchPage(std::map<std::string, float >& MatchMap, string input_file)
 
   // make sorted map to display results
 
-  std::map<float, vector <std::string> > SortedMap;
+  std::map<double, vector <std::string> > SortedMap;
 
   print_SortedMap(SortedMap, MatchMap);
 
@@ -707,7 +707,7 @@ int main(int argc, char* argv[])
       populateKeyMap(KeyMap, WordMap, new_input_words); 
 
       // populate a match list with weights for each word
-      std::map<std::string, float > MatchMap;
+      std::map<std::string, double > MatchMap;
       make_MatchMap(MatchMap,KeyMap,WordMap,keylist);
 
 
