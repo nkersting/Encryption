@@ -370,8 +370,10 @@ int main(int argc, char* argv[])
    time_t latest_timestamp = ReadRegisteredFiles(registered_files);
    LookForNewFiles(new_files, latest_timestamp);
 
-   if (new_files.size() == 0)   // exit early if no new files found
+   if (0 == new_files.size()) { 
+      WriteRepoirePage();       // just prompt to redraw the page and exit
       return 0;
+   }
 
    fstream line_file;
    line_file.open(DATADIR_LINES, fstream::out | fstream::app);
@@ -404,7 +406,5 @@ int main(int argc, char* argv[])
 
    return 0;
 }
-
-
 
 
