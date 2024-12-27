@@ -8,10 +8,12 @@
         .node { stroke: #fff; stroke-width: 1.5px; }
         .link { stroke: #999; stroke-opacity: 0.6; }
         svg { border: 2px solid black; }
+        .highlight { fill: orange; }
     </style>
 </head>
 <body>
     <h1>Similarity Network</h1>
+    <input type="text" id="search" placeholder="Search for a node...">
     <svg width="960" height="600"></svg>
 
     <script>
@@ -83,6 +85,12 @@
                             event.subject.fy = null;
                         });
                 }
+
+                // Search functionality
+                d3.select("#search").on("input", function() {
+                    const searchTerm = this.value.toLowerCase();
+                    node.classed("highlight", d => d.id.toLowerCase().includes(searchTerm));
+                });
             });
     </script>
 </body>
