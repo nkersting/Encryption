@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Quantum Repoire Server</title>
+    <style type="text/css">
+        .style3 { font-family: Arial, Helvetica, sans-serif; font-size: 50px; }
+        .style1 { font-family: Arial, Helvetica, sans-serif; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <div align="center">
+        <h1 class="style3">Quantum Repoire</h1>
+        <p class="style1">An <a href="https://github.com/nkersting/Encryption">Open-Source</a> Interest-Matching Experiment</p>
+        <h3>Encrypt On Your Own Machine</h3>
+        <ol>
+            <li><a href="simple_encrypt">Download the encryption script (Python)</a></li>
+            <li><a href="omegaO2.txt">Download the dictionary</a> (9 MB)</li>
+            <li>Run the script locally to create a serialized file of your set.</li>
+            <li>Upload the file to the server using the form below.</li>
+        </ol>
+
+        <h3>Upload Your File</h3>
+        <form action="/upload" enctype="multipart/form-data" method="post">
+            <input type="file" name="userfile" required>
+            <input type="submit" value="Upload">
+        </form>
+        <p><a href="/files">View Uploaded Files</a></p>
+        <p><a href="/results">View Results/Network Visualization</a></p>
+    </div>
+</body>
+</html>

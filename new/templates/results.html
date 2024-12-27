@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Network Visualization</title>
+    <style>
+        .node { stroke: #fff; stroke-width: 1.5px; }
+        .link { stroke: #999; stroke-opacity: 0.6; }
+        svg { border: 2px solid black; }
+    </style>
+</head>
+<body>
+    <h1>Similarity Network</h1>
+    <svg width="960" height="600"></svg>
+
+    <script>
+        // Fetch the network data
+        fetch('/api/graph')
+            .then(response => response.json())
+            .then(data => {
+                const width = 960, height = 600;
+
+                // Create SVG canvas
+                const svg = d3.select("svg")
+                                .attr("width", width)
+                                .attr("height", height);
+
+                // Simulation
+                const simulation = d3.forceSimulation(data.nodes)
+                    .force("link", d3.forceLink(data.links).id(d => d.id).distance(d => 100 - d.similarity * 100))
+                    .force("charge", d3.forceManyBody().strength(-500))
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                // Draw links
+                const link = svg.append("g")
+                                .attr("class", "links")
+                                .selectAll("line")
+                                .data(data.links)
+                                .enter().append("line")
+                                .attr("class", "link")
+                                .attr("stroke-width", d => Math.sqrt(d.similarity));
+
+                // Draw nodes
+                const node = svg.append("g")
+                                .attr("class", "nodes")
+                                .selectAll("circle")
+                                .data(data.nodes)
+                                .enter().append("circle")
+                                .attr("class", "node")
+                                .attr("r", 5)
+                                .attr("fill", "steelblue")
+                                .call(drag(simulation));
+
+                // Tooltip
+                node.append("title").text(d => d.id);
+
+                // Update positions
+                simulation.on("tick", () => {
+                    link.attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    node.attr("cx", d => d.x)
+                        .attr("cy", d => d.y);
+                });
+
+                function drag(simulation) {
+                    return d3.drag()
+                        .on("start", event => {
+                            if (!event.active) simulation.alphaTarget(0.3).restart();
+                            event.subject.fx = event.subject.x;
+                            event.subject.fy = event.subject.y;
+                        })
+                        .on("drag", event => {
+                            event.subject.fx = event.x;
+                            event.subject.fy = event.y;
+                        })
+                        .on("end", event => {
+                            if (!event.active) simulation.alphaTarget(0);
+                            event.subject.fx = null;
+                            event.subject.fy = null;
+                        });
+                }
+            });
+    </script>
+</body>
+</html>

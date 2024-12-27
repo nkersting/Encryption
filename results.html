@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html class="no-js" lang="en"> 
+<head>
+  <meta charset="utf-8"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+   <title>Repoire Social Network</title>
+  <meta name="description" content="Ideas Colored by Meaning">
+  <meta name="author" content="Nick Kersting">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+   <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+   <script src="../js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+<body>
+  <div id="container" class="container">
+    <header>
+     <h1>Repoire Network</h1>
+  <p>The network is shown as a <a href="http://en.wikipedia.org/wiki/Force-based_algorithms_(graph_drawing)">
+force-based network layout</a> where messages are like "charges" that repel each other and links between messages act like "springs" pulling them together with a restoring force. </p>
+<ul> <li> Hovering over a submission shows the filename, semantic size, and links to other submissions. </li>
+ <li> Clicking on a submission will bring up another window where you can try a quantitative match to that submission</li>
+      <li>There is also a search form below were you can search for a submission by its filename:
+  matching results will be <b>blackened</b> in the plot.</li></ul>
+     </header>
+      <div id="song_selection" class="control">
+ <h3>Space</h3>
+ <select id="song_select">
+   <option value="repoire.json">Public Commons</option>
+  <option value="scientific.json">Scientific Titles</option>
+  <option value="hr.json">HR Issues</option>
+ </select>
+  </div>
+<table width="700">
+<tr>
+<td align="center">
+  <div id="search_section" class="control">
+    <form id="search_form" action=""  method="post">
+      <p class="search_title">Search for Filename<input type="text" class="text-input" id="search" value="" /></p>
+    </form>
+  </td>
+
+<td align="center">
+  <form action="/cgi-bin/refresh.cgi" method="post" name="TestForm" id="TestForm">
+    <p align="right">  <input type="submit" name="submit" value="Refresh Network" />  </p>
+  </form>
+</td>
+</tr>
+</table>
+ <table width="900" border="1">
+ <tr>
+ <td>
+ <div id="main" role="main"> <div id="vis"></div></div>
+ </td>
+ </tr>
+ <tr>
+ <td>
+</td>
+</tr>
+</table>
+<script>window.jQuery || document.write('<script src="../js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+<script defer src="../js/plugins.js"></script> 
+<script defer src="../js/script.js"></script>  
+<script src="../js/libs/coffee-script.js"></script>  
+<script src="../js/libs/d3.v2.js"></script>  
+<script src="../js/Tooltip.js"></script>  
+<script type="text/coffeescript" src="../coffee/vis.coffee"></script>  
+<p>&nbsp;</p>
+<p align="center"><span class="style1 style5 style4"><a href="../index.html" target="_self">back</a></span></p>
+</body>
+</html>

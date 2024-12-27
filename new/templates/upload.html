@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and View Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            padding: 10px 15px;
+            background-color: #556ee6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #444fc9;
+        }
+        .file-list {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .file-list h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        a {
+            color: #556ee6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload and Manage Files</h1>
+        
+        <!-- File Upload Section -->
+        <form action="/upload" enctype="multipart/form-data" method="post">
+            <h2>Upload Your File</h2>
+            <p>Choose your serialized file and click 'Upload' to add it:</p>
+            <input type="file" name="userfile" required>
+            <input type="submit" value="Upload">
+        </form>
+
+        <!-- File List Section -->
+        <div class="file-list">
+            <h2>Uploaded Files</h2>
+            <ul id="file-list">
+                <!-- Files will be dynamically loaded -->
+            </ul>
+        </div>
+
+        <p><a href="/results">Go to Network Visualization</a></p>
+        <p><a href="/">Back to Home</a></p>
+    </div>
+
+    <script>
+        // Fetch list of uploaded files (from `/api/files` endpoint)
+        fetch('/api/files')
+            .then(response => response.json())
+            .then(data => {
+                const fileList = document.getElementById('file-list');
+                fileList.innerHTML = ''; // Clear existing list
+
+                // Add each file to the list
+                if (data.files && data.files.length > 0) {
+                    data.files.forEach(file => {
+                        const li = document.createElement('li');
+                        li.textContent = file;
+                        fileList.appendChild(li);
+                    });
+                } else {
+                    const emptyMessage = document.createElement('li');
+                    emptyMessage.textContent = 'No files uploaded yet.';
+                    fileList.appendChild(emptyMessage);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching files:', error);
+            });
+    </script>
+</body>
+</html>
