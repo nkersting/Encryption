@@ -53,9 +53,16 @@ def api_graph():
         graph = json.load(f)
     return jsonify(graph)
 
+SIMILARITY_THRESHOLD = 0.1
+
 def compute_similarity(new_file):
     new_filepath = os.path.join(UPLOAD_FOLDER, new_file)
     new_set = set(map(int, open(new_filepath).read().splitlines()))
+
+    # Ensure graph file exists
+    if not os.path.exists(GRAPH_FILE):
+        with open(GRAPH_FILE, 'w') as f:
+            json.dump({'nodes': [], 'links': []}, f)
 
     with open(GRAPH_FILE, 'r') as f:
         graph = json.load(f)
@@ -69,7 +76,7 @@ def compute_similarity(new_file):
         existing_filepath = os.path.join(UPLOAD_FOLDER, node['id'])
         existing_set = set(map(int, open(existing_filepath).read().splitlines()))
         sim = len(new_set.intersection(existing_set)) / len(new_set.union(existing_set))
-        if sim > 0:  # Only significant links
+        if sim >= SIMILARITY_THRESHOLD:  # Only significant links
             graph['links'].append({'source': new_file, 'target': node['id'], 'similarity': sim})
 
     with open(GRAPH_FILE, 'w') as f:
