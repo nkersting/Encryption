@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify, render_template
 import os
 import json
-import numpy as np
-from scipy.spatial.distance import pdist, squareform
-from sklearn.metrics import jaccard_score
 
 UPLOAD_FOLDER = './uploads'
+GRAPH_FILE = './graph.json'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure upload folder exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+# Ensure graph file exists
+if not os.path.exists(GRAPH_FILE):
+    with open(GRAPH_FILE, 'w') as f:
+        json.dump({'nodes': [], 'links': []}, f)
 
 @app.route('/')
 def index():
@@ -36,7 +39,7 @@ def upload():
 
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
-    compute_similarity()  # Recompute the network
+    compute_similarity(file.filename)  # Recompute the network for the new file
     return 'File uploaded and network updated successfully.', 200
 
 @app.route('/api/files')
@@ -46,26 +49,30 @@ def api_files():
 
 @app.route('/api/graph')
 def api_graph():
-    with open('./graph.json', 'r') as f:
+    with open(GRAPH_FILE, 'r') as f:
         graph = json.load(f)
     return jsonify(graph)
 
-def compute_similarity():
-    files = [os.path.join(UPLOAD_FOLDER, f) for f in os.listdir(UPLOAD_FOLDER)]
-    sets = [set(map(int, open(f).read().splitlines())) for f in files]
+def compute_similarity(new_file):
+    new_filepath = os.path.join(UPLOAD_FOLDER, new_file)
+    new_set = set(map(int, open(new_filepath).read().splitlines()))
 
-    # Compute Jaccard similarity
-    n = len(sets)
-    nodes = [{'id': os.path.basename(f)} for f in files]
-    links = []
-    for i in range(n):
-        for j in range(i + 1, n):
-            sim = len(sets[i].intersection(sets[j])) / len(sets[i].union(sets[j]))
-            if sim > 0:  # Only significant links
-                links.append({'source': nodes[i]['id'], 'target': nodes[j]['id'], 'similarity': sim})
+    with open(GRAPH_FILE, 'r') as f:
+        graph = json.load(f)
 
-    graph = {'nodes': nodes, 'links': links}
-    with open('./graph.json', 'w') as f:
+    new_node = {'id': new_file}
+    graph['nodes'].append(new_node)
+
+    for node in graph['nodes']:
+        if node['id'] == new_file:
+            continue
+        existing_filepath = os.path.join(UPLOAD_FOLDER, node['id'])
+        existing_set = set(map(int, open(existing_filepath).read().splitlines()))
+        sim = len(new_set.intersection(existing_set)) / len(new_set.union(existing_set))
+        if sim > 0:  # Only significant links
+            graph['links'].append({'source': new_file, 'target': node['id'], 'similarity': sim})
+
+    with open(GRAPH_FILE, 'w') as f:
         json.dump(graph, f)
 
 if __name__ == '__main__':
