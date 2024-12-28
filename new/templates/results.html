@@ -141,9 +141,13 @@
                     const searchTerm = this.value.toLowerCase();
                     const targetNode = data.nodes.find(d => d.id.toLowerCase() === searchTerm);
                     if (targetNode) {
-                        svg.transition()
+                        const transform = d3.zoomIdentity
+                            .translate(width / 2, height / 2)
+                            .scale(1)
+                            .translate(-targetNode.x, -targetNode.y);
+                        d3.select("svg").transition()
                             .duration(750)
-                            .call(d3.zoom().transform, d3.zoomIdentity.translate(width / 2 - targetNode.x, height / 2 - targetNode.y).scale(1));
+                            .call(d3.zoom().transform, transform);
                     }
                 });
             });
