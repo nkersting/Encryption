@@ -61,7 +61,7 @@ def api_recompute():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-SIMILARITY_THRESHOLD = 0.1
+SIMILARITY_THRESHOLD = 0.01
 
 def compute_similarity(new_file):
     new_filepath = os.path.join(UPLOAD_FOLDER, new_file)
