@@ -21,6 +21,7 @@
             border-radius: 8px;
             pointer-events: none;
         }
+        .highlighted-link { stroke: #210235; stroke-width: 2px; }
     </style>
 </head>
 <body>
@@ -112,11 +113,17 @@
                         tooltip.html(d.id)
                             .style("left", (event.pageX + 5) + "px")
                             .style("top", (event.pageY - 28) + "px");
+
+                        // Highlight connected links
+                        link.classed("highlighted-link", l => l.source.id === d.id || l.target.id === d.id);
                     })
                     .on("mouseout", (event, d) => {
                         tooltip.transition()
                             .duration(500)
                             .style("opacity", 0);
+
+                        // Unhighlight connected links
+                        link.classed("highlighted-link", false);
                     });
 
                 simulation.on("tick", () => {
