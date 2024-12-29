@@ -84,29 +84,29 @@
 
                 // Nodes
                 const node = g.append("g")
-                    .attr("class", "nodes")
-                    .selectAll("circle")
-                    .data(data.nodes)
-                    .enter().append("circle")
-                    .attr("class", "node")
-                    .attr("r", 5)
-                    .call(d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended))
-                    .on("mouseover", (event, d) => {
-                        tooltip.transition()
-                            .duration(200)
-                            .style("opacity", .9);
-                        tooltip.html(d.id)
-                            .style("left", (event.pageX + 5) + "px")
-                            .style("top", (event.pageY - 28) + "px");
-                    })
-                    .on("mouseout", (event, d) => {
-                        tooltip.transition()
-                            .duration(500)
-                            .style("opacity", 0);
-                    });
+                  .attr("class", "nodes")
+                  .selectAll("circle")
+                  .data(data.nodes)
+                  .enter().append("circle")
+                  .attr("class", "node")
+                  .attr("r", d => 1 + 4 * Math.log10(d.set.length))
+                  .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+                  .on("mouseover", (event, d) => {
+                    tooltip.transition()
+                      .duration(200)
+                      .style("opacity", .9);
+                    tooltip.html(d.id)
+                      .style("left", (event.pageX + 5) + "px")
+                      .style("top", (event.pageY - 28) + "px");
+                  })
+                  .on("mouseout", (event, d) => {
+                    tooltip.transition()
+                      .duration(500)
+                      .style("opacity", 0);
+                  });
 
                 simulation.on("tick", () => {
                     link
