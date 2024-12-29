@@ -6,7 +6,7 @@
     <title>Network Visualization</title>
     <style>
         .node { stroke: #fff; stroke-width: 1.5px; }
-        .link { stroke: #999; stroke-opacity: 0.6; }
+        .link { stroke-opacity: 0.6; }
         svg { border: 2px solid black; }
         .highlight { fill: orange; }
         .tooltip {
@@ -21,7 +21,7 @@
             border-radius: 8px;
             pointer-events: none;
         }
-        .highlighted-link { stroke: #210235; stroke-width: 2px; }
+        .highlighted-link { stroke: #330233; stroke-width: 2px; }
     </style>
 </head>
 <body>
@@ -85,13 +85,19 @@
                     return color;
                 }
 
+                // Create a color scale for link darkness
+                const colorScale = d3.scaleLinear()
+                    .domain([0, 1]) // Assuming similarity ranges from 0 to 1
+                    .range(["#cccccc", "#000000"]); // Light gray to black
+
                 // Links
                 const link = g.append("g")
                     .attr("class", "links")
                     .selectAll("line")
                     .data(data.links)
                     .enter().append("line")
-                    .attr("class", "link");
+                    .attr("class", "link")
+                    .attr("stroke", d => colorScale(d.similarity)); // Apply color scale to link stroke
 
                 // Nodes
                 const node = g.append("g")
