@@ -139,12 +139,12 @@
                   const targetNode = data.nodes.find(d => d.id.toLowerCase() === searchTerm);
                   if (targetNode) {
                     const transform = d3.zoomIdentity
-                      .translate(width / 2, height / 2)
-                      .scale(1)
-                      .translate(-targetNode.x, -targetNode.y);
-                    d3.select("svg").transition()
-                      .duration(750)
-                      .call(d3.zoom().transform, transform);
+                    .translate(width / 2, height / 2)
+                    .scale(1)
+                    .translate(-targetNode.x, -targetNode.y);
+                  svg.transition()
+                    .duration(750)
+                    .attr("transform", transform);
                   }
                 });
                 });
