@@ -37,6 +37,12 @@ def upload():
     if file.filename == '':
         return 'No file selected', 400
 
+    UPLOAD_LIMIT = 10000  # Configurable upper limit for number of files
+
+    # Safeguard to prevent uploading if more than UPLOAD_LIMIT files
+    if len(os.listdir(app.config['UPLOAD_FOLDER'])) >= UPLOAD_LIMIT:
+        return 'Upload limit reached. Cannot upload more files.', 400
+
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
     compute_similarity(file.filename)  # Recompute the network for the new file
