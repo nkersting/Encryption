@@ -1,73 +1,229 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<html class="no-js" lang="en"> 
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8"> 
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-   <title>Repoire Social Network</title>
-  <meta name="description" content="Ideas Colored by Meaning">
-  <meta name="author" content="Nick Kersting">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-   <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/bootstrap.min.css">
-  <link rel="stylesheet" href="../css/style.css">
-   <script src="../js/libs/modernizr-2.0.6.min.js"></script>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Network Visualization</title>
+    <style>
+        .node { stroke: #fff; stroke-width: 1.5px; }
+        .link { stroke-opacity: 0.6; }
+        svg { border: 2px solid black; }
+        .highlight { fill: rgb(0, 0, 0); }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .highlighted-link { stroke: #330233; stroke-width: 2px; }
+    </style>
 </head>
 <body>
-  <div id="container" class="container">
+    <div id="container" class="container">
     <header>
-     <h1>Repoire Network</h1>
-  <p>The network is shown as a <a href="http://en.wikipedia.org/wiki/Force-based_algorithms_(graph_drawing)">
-force-based network layout</a> where messages are like "charges" that repel each other and links between messages act like "springs" pulling them together with a restoring force. </p>
-<ul> <li> Hovering over a submission shows the filename, semantic size, and links to other submissions. </li>
- <li> Clicking on a submission will bring up another window where you can try a quantitative match to that submission</li>
-      <li>There is also a search form below were you can search for a submission by its filename:
-  matching results will be <b>blackened</b> in the plot.</li></ul>
-     </header>
-      <div id="song_selection" class="control">
- <h3>Space</h3>
- <select id="song_select">
-   <option value="repoire.json">Public Commons</option>
-  <option value="scientific.json">Scientific Titles</option>
-  <option value="hr.json">HR Issues</option>
- </select>
-  </div>
-<table width="700">
-<tr>
-<td align="center">
-  <div id="search_section" class="control">
-    <form id="search_form" action=""  method="post">
-      <p class="search_title">Search for Filename<input type="text" class="text-input" id="search" value="" /></p>
-    </form>
-  </td>
+      <title>Repoire Network</title>
+      <style type="text/css">
+.style7 {font-family: Times, Helvetica, sans-serif; font-size: 17px; }
+.style6 {font-family: Arial, Helvetica, sans-serif; font-size: 18px; }
+.style2 {font-family: Arial, Helvetica, sans-serif; font-size: 25px; }
+.style1 {font-family: Arial, Helvetica, sans-serif; font-size: 20px; }
+.style4 {font-family: Arial, Helvetica, sans-serif}
+.style5 {font-size: 18px}
+.style3 {	font-family: Arial, Helvetica, sans-serif;
+	font-size: 50px;
+}
+</style>
+      <p align="center" valign="center" ><span class="style3">Repoire Network</span></p>
+      <p align="center" valign="center" class="style7" ><b>(large networks may take several seconds to load, please be patient!)</b>
+</span></p>
+      <p>The network is shown as a <a href="http://en.wikipedia.org/wiki/Force-based_algorithms_(graph_drawing)"></a>
+      force-based network layout</a> where messages are like "charges" that repel each other and links between messages act like "springs" pulling them together with a restoring force. </p>
+<ul>
+  <li> The full network is likely to be large so the usual google-map type pan and zoom functions are enabled. </li>
+  <li> The radius of each node shows how large, semantically speaking, the submission is. </li>
+        <li> Hovering over a submission shows the exact filename and links of significance to other submissions. </li>
+        <li> Clicking on a submission centers the network graph on it.</li>
+        <li>There is also a search form below were you can search for a submission by its filename:
+        matching results will be <b>blackened</b> in the plot. If you type the exact name of a filename, the graph will center on it.</li>
+      </ul>
+    </header>
+   </div>
+    <input type="text" id="search" placeholder="Search for a node...">
+    <button id="recompute-btn">Recompute Network</button>
+    <svg width="960" height="600"></svg>
+    <div id="tooltip" class="tooltip" style="opacity:0;"></div>
 
-<td align="center">
-  <form action="/cgi-bin/refresh.cgi" method="post" name="TestForm" id="TestForm">
-    <p align="right">  <input type="submit" name="submit" value="Refresh Network" />  </p>
-  </form>
-</td>
-</tr>
-</table>
- <table width="900" border="1">
- <tr>
- <td>
- <div id="main" role="main"> <div id="vis"></div></div>
- </td>
- </tr>
- <tr>
- <td>
-</td>
-</tr>
-</table>
-<script>window.jQuery || document.write('<script src="../js/libs/jquery-1.7.2.min.js"><\/script>')</script>
-<script defer src="../js/plugins.js"></script> 
-<script defer src="../js/script.js"></script>  
-<script src="../js/libs/coffee-script.js"></script>  
-<script src="../js/libs/d3.v2.js"></script>  
-<script src="../js/Tooltip.js"></script>  
-<script type="text/coffeescript" src="../coffee/vis.coffee"></script>  
-<p>&nbsp;</p>
-<p align="center"><span class="style1 style5 style4"><a href="../index.html" target="_self">back</a></span></p>
+    <script>
+        document.getElementById('recompute-btn').addEventListener('click', () => {
+            const password = prompt("Enter password to refresh the network:");
+            if (password === "use_sparingly_because_this_rewrites_the_whole_damn_graph_and_inconveniences_everyone") {
+                fetch('cgi-bin/recompute.cgi', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Network recomputed successfully.');
+                            location.reload(); // Reload the page to fetch the updated network
+                        } else {
+                            alert('Failed to recompute the network.');
+                        }
+                    });
+            } else {
+                alert('Incorrect password.');
+            }
+        });
+
+        // Fetch the network data
+        fetch('cgi-bin/graph.cgi')
+            .then(response => response.json())
+            .then(data => {
+                const width = 960, height = 600;
+
+                // Create SVG canvas
+                const svg = d3.select("svg")
+                                .attr("width", width)
+                                .attr("height", height);
+
+                const g = svg.append("g");
+
+                const zoom = d3.zoom()
+                    .scaleExtent([0.1, 10])
+                    .on("zoom", (event) => {
+                        g.attr("transform", event.transform);
+                    });
+
+                svg.call(zoom);
+
+                // Tooltip div
+                const tooltip = d3.select("#tooltip");
+
+                // Simulation
+                const simulation = d3.forceSimulation(data.nodes)
+                    .force("link", d3.forceLink(data.links).id(d => d.id).distance(d => 100 - d.similarity * 100))
+                    .force("charge", d3.forceManyBody().strength(-500))
+                    .force("center", d3.forceCenter(width / 2, height / 2));
+
+                // Function to generate a random color
+                function getRandomColor() {
+                    const letters = '0123456789ABCDEF';
+                    let color = '#';
+                    for (let i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                    }
+                    return color;
+                }
+
+                // Create a color scale for link darkness
+                const colorScale = d3.scaleLinear()
+                    .domain([0, 1]) // Assuming similarity ranges from 0 to 1
+                    .range(["#cccccc", "#000000"]); // Light gray to black
+
+                // Links
+                const link = g.append("g")
+                    .attr("class", "links")
+                    .selectAll("line")
+                    .data(data.links)
+                    .enter().append("line")
+                    .attr("class", "link")
+                    .attr("stroke", d => colorScale(d.similarity)); // Apply color scale to link stroke
+
+                // Nodes
+                const node = g.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("circle")
+                    .data(data.nodes)
+                    .enter().append("circle")
+                    .attr("class", "node")
+                    .attr("r", d => 1 + 4 * Math.log10(d.set.length))
+                    .attr("fill", getRandomColor) // Apply random color to each node
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended))
+                    .on("mouseover", (event, d) => {
+                        tooltip.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        tooltip.html(d.id)
+                            .style("left", (event.pageX + 5) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+
+                        // Highlight connected links
+                        link.classed("highlighted-link", l => l.source.id === d.id || l.target.id === d.id);
+                    })
+                    .on("mouseout", (event, d) => {
+                        tooltip.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+
+                        // Unhighlight connected links
+                        link.classed("highlighted-link", false);
+                    })
+                    .on("click", (event, d) => {
+                        const transform = d3.zoomIdentity
+                            .translate(width / 2, height / 2)
+                            .scale(1)
+                            .translate(-d.x, -d.y);
+                        svg.transition()
+                            .duration(750)
+                            .call(zoom.transform, transform);
+                    });
+
+                simulation.on("tick", () => {
+                    link
+                        .attr("x1", d => d.source.x)
+                        .attr("y1", d => d.source.y)
+                        .attr("x2", d => d.target.x)
+                        .attr("y2", d => d.target.y);
+
+                    node
+                        .attr("cx", d => d.x)
+                        .attr("cy", d => d.y);
+                });
+
+                function dragstarted(event, d) {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+
+                function dragged(event, d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                }
+
+                function dragended(event, d) {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }
+
+                // Search functionality
+                d3.select("#search").on("input", function() {
+                    const searchTerm = this.value.toLowerCase();
+                    node.classed("highlight", d => d.id.toLowerCase().includes(searchTerm));
+                });
+
+                d3.select("#search").on("change", function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const targetNode = data.nodes.find(d => d.id.toLowerCase() === searchTerm);
+                    if (targetNode) {
+                        const transform = d3.zoomIdentity
+                            .translate(width / 2, height / 2)
+                            .scale(1)
+                            .translate(-targetNode.x, -targetNode.y);
+                        svg.transition()
+                            .duration(750)
+                            .call(zoom.transform, transform);
+                    }
+                });
+            });
+    </script>
+        <p align="center"><span class="style1 style5 style4"><a href="../index.html" target="_self">back</a></span></p>
 </body>
 </html>
