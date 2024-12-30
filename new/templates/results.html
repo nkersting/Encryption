@@ -32,17 +32,24 @@
     <div id="tooltip" class="tooltip" style="opacity:0;"></div>
 
     <script>
+        const refreshPwd = "{{ refresh_pwd }}"; // Embed the environment variable value
+
         document.getElementById('recompute-btn').addEventListener('click', () => {
-            fetch('/api/recompute', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Network recomputed successfully.');
-                        location.reload(); // Reload the page to fetch the updated network
-                    } else {
-                        alert('Failed to recompute the network.');
-                    }
-                });
+            const password = prompt("Enter password to refresh the network:");
+            if (password === refreshPwd) {
+                fetch('/api/recompute', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Network recomputed successfully.');
+                            location.reload(); // Reload the page to fetch the updated network
+                        } else {
+                            alert('Failed to recompute the network.');
+                        }
+                    });
+            } else {
+                alert('Incorrect password.');
+            }
         });
 
         // Fetch the network data
