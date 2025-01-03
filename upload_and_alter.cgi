@@ -17,15 +17,25 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 def save_uploaded_file(fileitem):
+    MAX_FILE_SIZE = 1 * 1024 * 1024  # 1MB size limit
+
     if fileitem.filename:
         # Strip leading path from file name to avoid directory traversal attacks
         filename = os.path.basename(fileitem.filename)
-        filepath = os.path.join(UPLOAD_FOLDER,filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
 
         # Check if the file already exists
         if os.path.exists(filepath):
             return False, filename, "File already exists."
-	    
+
+        # Check file size
+        fileitem.file.seek(0, os.SEEK_END)
+        file_size = fileitem.file.tell()
+        fileitem.file.seek(0, os.SEEK_SET)
+
+        if file_size > MAX_FILE_SIZE:
+            return False, filename, "File exceeds size limit of 1MB. Please choose smaller file."
+
         # Save the file
         with open(filepath, 'wb') as f:
             f.write(fileitem.file.read())
