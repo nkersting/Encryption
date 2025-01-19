@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload and View Files</title>
+    <title>Upload and Manage Files</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,9 +15,8 @@
             width: 80%;
             margin: 0 auto;
         }
-        h1 {
-            text-align: center;
-            color: #222;
+        h1, h2 {
+            color: #333;
         }
         form {
             display: flex;
@@ -49,10 +48,6 @@
             border-radius: 5px;
             padding: 20px;
         }
-        .file-list h2 {
-            margin: 0 0 10px 0;
-            color: #333;
-        }
         ul {
             list-style-type: none;
             padding: 0;
@@ -78,7 +73,7 @@
         <h1>Upload and Manage Files</h1>
         
         <!-- File Upload Section -->
-        <form action="/upload" enctype="multipart/form-data" method="post">
+        <form action="/cgi-bin/upload.cgi" enctype="multipart/form-data" method="post">
             <h2>Upload Your File</h2>
             <p>Choose your serialized file and click 'Upload' to add it:</p>
             <input type="file" name="userfile" required>
@@ -93,13 +88,13 @@
             </ul>
         </div>
 
-        <p><a href="/results">Go to Network Visualization</a></p>
-        <p><a href="/">Back to Home</a></p>
+        <p><a href="results.html">Go to Network Visualization</a></p>
+        <p><a href="index.html">Back to Home</a></p>
     </div>
 
     <script>
-        // Fetch list of uploaded files (from `/api/files` endpoint)
-        fetch('/api/files')
+        // Fetch list of uploaded files (from `/cgi-bin/files.cgi` endpoint)
+        fetch('/cgi-bin/files.cgi')
             .then(response => response.json())
             .then(data => {
                 const fileList = document.getElementById('file-list');
@@ -109,7 +104,11 @@
                 if (data.files && data.files.length > 0) {
                     data.files.forEach(file => {
                         const li = document.createElement('li');
-                        li.textContent = file;
+                        const a = document.createElement('a');
+                        a.textContent = file;
+                        a.href = `/uploads/${file}`; // Assuming files are served from the /uploads directory
+                        a.download = file; // Suggests the browser to download the file
+                        li.appendChild(a);
                         fileList.appendChild(li);
                     });
                 } else {
